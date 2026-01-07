@@ -8,7 +8,6 @@ export const feedbackSchema = z.object({
         "ambiente",
     ]),
     rating: z
-        .coerce
         .number()
         .refine((value) => !isNaN(value), {
             message: "Avaliação obrigatória",
