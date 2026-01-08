@@ -8,16 +8,18 @@ export function useFeedbacks(filters?: FeedbackFilters) {
   const [error, setError] = useState<string | null>(null);
 
   const fetchFeedbacks = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await FeedbackService.getFeedbacks(filters);
-      setFeedbacks(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao carregar feedbacks');
-    } finally {
-      setLoading(false);
+    setLoading(true);
+    setError(null);
+    
+    const result = await FeedbackService.getFeedbacks(filters);
+    
+    if (result.success) {
+      setFeedbacks(result.data);
+    } else {
+      setError(result.error);
     }
+    
+    setLoading(false);
   }, [filters]);
 
   useEffect(() => {
@@ -38,16 +40,18 @@ export function useFeedbackMetrics() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchMetrics = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await FeedbackService.getMetrics();
-      setMetrics(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao carregar métricas');
-    } finally {
-      setLoading(false);
+    setLoading(true);
+    setError(null);
+    
+    const result = await FeedbackService.getMetrics();
+    
+    if (result.success) {
+      setMetrics(result.data);
+    } else {
+      setError(result.error);
     }
+    
+    setLoading(false);
   }, []);
 
   useEffect(() => {

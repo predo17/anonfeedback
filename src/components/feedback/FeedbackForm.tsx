@@ -32,21 +32,26 @@ export function FeedbackForm() {
     const rating = watch("rating");
 
     const onSubmit = async (data: FeedbackFormSchema) => {
-        try {
-            setIsSubmitting(true);
-            await FeedbackService.createFeedback({ ...data, comment: data.comment ?? "" });
+        setIsSubmitting(true);
+        
+        const result = await FeedbackService.createFeedback({ 
+            ...data, 
+            comment: data.comment ?? "" 
+        });
+        
+        if (result.success) {
             toast.success('Feedback enviado com sucesso!', {
                 description: 'Obrigado por compartilhar sua opinião.',
             });
             reset();
             setSelectedRating(0);
-        } catch (error) {
+        } else {
             toast.error('Erro ao enviar feedback', {
-                description: error instanceof Error ? error.message : 'Tente novamente.',
+                description: result.error,
             });
-        } finally {
-            setIsSubmitting(false);
         }
+        
+        setIsSubmitting(false);
     };
 
     return (
