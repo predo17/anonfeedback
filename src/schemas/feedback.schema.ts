@@ -21,6 +21,7 @@ export const feedbackSchema = z.object({
         }),
     comment: z
         .string()
+        .refine((value) => value.trim().length > 0, "Comentário é obrigatório")
         .min(5, "Comentário muito curto")
         .max(1000, "Comentário muito longo")
         .optional(),
