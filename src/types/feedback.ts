@@ -1,15 +1,33 @@
-import { z } from "zod"
-import { feedbackSchema } from "@/schemas/feedback.schema"
+export type FeedbackCategory = 'comunicacao' | 'lideranca' | 'processos' | 'ambiente';
 
-export type FeedbackFormData = z.infer<typeof feedbackSchema>
+export interface Feedback {
+  id: string;
+  category: FeedbackCategory;
+  rating: number;
+  comment: string;
+  created_at: string;
+}
 
-export type FeedbackCategory =
-  | "comunicacao"
-  | "lideranca"
-  | "processos"
-  | "ambiente"
+export interface FeedbackFormData {
+  category: FeedbackCategory;
+  rating: number;
+  comment: string;
+}
 
-export interface Feedback extends FeedbackFormData {
-  id: string
-  createdAt: string
+export interface FeedbackMetrics {
+  total: number;
+  averageRating: number;
+  byCategory: {
+    [key in FeedbackCategory]: {
+      count: number;
+      average: number;
+    };
+  };
+}
+
+export interface FeedbackFilters {
+  category?: FeedbackCategory;
+  rating?: number;
+  sortBy?: 'created_at' | 'rating';
+  sortOrder?: 'asc' | 'desc';
 }

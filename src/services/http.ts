@@ -1,21 +1,10 @@
-import axios from "axios";
+import { createClient } from '@supabase/supabase-js';
 
-export const httpClient = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
-    timeout: 10000,
-    headers: {
-        'Content-Type': 'application/json'
-    }
-})
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-httpClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    const message =
-      error.response?.data?.message ||
-      error.message ||
-      "Erro inesperado"
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables');
+}
 
-    return Promise.reject(new Error(message))
-  }
-)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);

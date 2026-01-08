@@ -1,60 +1,63 @@
-import { useCallback, useEffect, useState } from "react"
-import { feedbackService } from "@/services/feedback.service"
-import type { Feedback, FeedbackFormData } from "@/types/feedback"
+import { useState, useEffect, useCallback } from 'react';
+import { FeedbackService } from '@/services/feedback.service';
+import type { Feedback, FeedbackFilters, FeedbackMetrics } from '@/types/feedback';
 
-interface UseFeedbackReturn {
-  feedbacks: Feedback[]
-  isLoading: boolean
-  error: string | null
-  loadFeedbacks: () => Promise<void>
-  createFeedback: (data: FeedbackFormData) => Promise<void>
-}
+export function useFeedbacks(filters?: FeedbackFilters) {
+  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-export function useFeedback(): UseFeedbackReturn {
-  const [feedbacks, setFeedbacks] = useState<Feedback[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  const loadFeedbacks = useCallback(async () => {
+  const fetchFeedbacks = useCallback(async () => {
     try {
-      setIsLoading(true)
-      setError(null)
-
-      const data = await feedbackService.getAll()
-      setFeedbacks(data)
+      setLoading(true);
+      setError(null);
+      const data = await FeedbackService.getFeedbacks(filters);
+      setFeedbacks(data);
     } catch (err) {
-      setError((err as Error).message)
+      setError(err instanceof Error ? err.message : 'Erro ao carregar feedbacks');
     } finally {
-      setIsLoading(false)
+      setLoading(false);
     }
-  }, [])
-
-  const createFeedback = useCallback(
-    async (payload: FeedbackFormData) => {
-      try {
-        setIsLoading(true)
-        setError(null)
-
-        const created = await feedbackService.create(payload)
-        setFeedbacks((prev) => [created, ...prev])
-      } catch (err) {
-        setError((err as Error).message)
-      } finally {
-        setIsLoading(false)
-      }
-    },
-    []
-  )
+  }, [filters]);
 
   useEffect(() => {
-    loadFeedbacks()
-  }, [loadFeedbacks])
+    fetchFeedbacks();
+  }, [fetchFeedbacks]);
 
   return {
     feedbacks,
-    isLoading,
+    loading,
     error,
-    loadFeedbacks,
-    createFeedback,
-  }
+    refetch: fetchFeedbacks,
+  };
+}
+
+export function useFeedbackMetrics() {
+  const [metrics, setMetrics] = useState<FeedbackMetrics | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchMetrics = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await FeedbackService.getMetrics();
+      setMetrics(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao carregar métricas');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchMetrics();
+  }, [fetchMetrics]);
+
+  return {
+    metrics,
+    loading,
+    error,
+    refetch: fetchMetrics,
+  };
 }

@@ -1,14 +1,17 @@
 import { z } from "zod"
 
+export const FeedbackCategory = [
+    "comunicacao",
+    "lideranca",
+    "processos",
+    "ambiente"
+] as const;
+
 export const feedbackSchema = z.object({
-    category: z.enum([
-        "comunicacao",
-        "lideranca",
-        "processos",
-        "ambiente",
-    ]),
+    category: z.enum(FeedbackCategory, {
+        error: 'Selecione uma categoria',
+    }),
     rating: z
-        .coerce
         .number()
         .refine((value) => !isNaN(value), {
             message: "Avaliação obrigatória",
@@ -19,6 +22,8 @@ export const feedbackSchema = z.object({
     comment: z
         .string()
         .min(5, "Comentário muito curto")
-        .max(300, "Comentário muito longo")
+        .max(1000, "Comentário muito longo")
         .optional(),
 })
+
+export type FeedbackFormSchema = z.infer<typeof feedbackSchema>;
