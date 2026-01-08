@@ -54,8 +54,9 @@ export function FeedbackTable() {
         {[...Array(5)].map((_, i) => (
           <Star
             key={i}
-            className={`w-4 h-4 ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
-              }`}
+            className={`w-4 h-4 ${
+              i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+            }`}
           />
         ))}
       </div>
@@ -85,7 +86,7 @@ export function FeedbackTable() {
               Atualizar
             </Button>
           </div>
-          <div className="flex flex-col md:flex-row gap-4 mt-4">
+          <div className="flex gap-4 mt-4">
             <div className="flex items-center gap-2">
               <Filter className="w-4 h-4 text-muted-foreground" />
               <Select
@@ -105,28 +106,23 @@ export function FeedbackTable() {
                 </SelectContent>
               </Select>
             </div>
-
-            <div className="flex items-center gap-2">
-              <Star className="w-4 h-4 text-muted-foreground" />
-              <Select
-                value={filters.rating?.toString() || 'all'}
-                onValueChange={handleRatingFilter}
-              >
-                <SelectTrigger className="w-45">
-                  <SelectValue placeholder="Avaliação" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas avaliações</SelectItem>
-                  {[5, 4, 3, 2, 1].map((rating) => (
-                    <SelectItem key={rating} value={rating.toString()}>
-                      {rating} {rating === 1 ? 'estrela' : 'estrelas'}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <Select
+              value={filters.rating?.toString() || 'all'}
+              onValueChange={handleRatingFilter}
+            >
+              <SelectTrigger className="w-45">
+                <SelectValue placeholder="Avaliação" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas avaliações</SelectItem>
+                {[5, 4, 3, 2, 1].map((rating) => (
+                  <SelectItem key={rating} value={rating.toString()}>
+                    {rating} {rating === 1 ? 'estrela' : 'estrelas'}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-
         </CardHeader>
         <CardContent>
           {loading ? (
